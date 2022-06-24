@@ -1,10 +1,6 @@
 from collections import defaultdict
 from contextlib import contextmanager
-from glob import glob
-from importlib import import_module
-from os.path import dirname, basename, isfile, join
 import ast
-import inspect
 import re
 
 from pyfawkes.operators import all_mixins
