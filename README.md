@@ -1,5 +1,4 @@
-PyFawkes
-========
+# PyFawkes
 
 PyFawkes is a mutation testing too.
 It supports `pytest`_ test in Python 3.5+.
@@ -12,8 +11,7 @@ From article at Wikipedia:
     suite that does not detect and reject the mutated code is considered
     defective.
 
-Quickstart
-----------
+## Quickstart
 
 PyFawkes is available on `PyPI`_, so it can be installed via::
 
