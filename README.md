@@ -5,11 +5,9 @@ It supports [py.test](https://docs.pytest.org/en/latest/) tests in Python 3.5+.
 
 From article at Wikipedia:
 
-    **Mutation testing** (or Mutation analysis or Program mutation)
-    evaluates the quality of software tests. Mutation testing involves
-    modifying a program's source code or byte code in small ways. A test
-    suite that does not detect and reject the mutated code is considered
-    defective.
+> **Mutation testing** evaluates the quality of software tests.
+> Mutation testing involves modifying a program's source code or byte code in small ways.
+> A test suite that does not detect and reject the mutated code is considered defective.
 
 ## Quickstart
 
