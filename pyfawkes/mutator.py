@@ -72,13 +72,8 @@ class Mutator(*all_mixins):
 
     def explore(self, root):
         for node in ast.walk(root):
-            for transformer in self.transformers[node.__class__.__name__]:
-                for new_node in transformer(node):
-                    ast.fix_missing_locations(new_node)
-                    yield SiteMutation(transformer.abbr, node, new_node)
-
-    def has_notmutate(self, node):  # Unused.
-        try:
-            return any(decorator.id == notmutate.__name__ for decorator in node.decorator_list)
-        except AttributeError:
-            return False
+            if not hasattr(node, "not_mutate"):
+                for transformer in self.transformers[node.__class__.__name__]:
+                    for new_node in transformer(node):
+                        ast.fix_missing_locations(new_node)
+                        yield SiteMutation(transformer.abbr, node, new_node)
