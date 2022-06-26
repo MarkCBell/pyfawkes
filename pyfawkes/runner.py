@@ -62,11 +62,8 @@ def helper(tests):
 
 class PytestTestRunner:
     def __init__(self, tests):
-        self.modules = set()
-        self.tests = set()
-        for test_module in tests:
-            self.modules.add(test_module)
-            self.tests.add(getattr(test_module, "__file__", test_module.__name__))
+        self.modules = set(tests)
+        self.tests = set(getattr(test_module, "__file__", test_module.__name__) for test_module in tests)
 
     def run(self, max_duration=None, mutant_module=None):
         if mutant_module is not None:
