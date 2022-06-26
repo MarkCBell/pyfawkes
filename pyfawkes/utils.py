@@ -20,7 +20,10 @@ def create_ast(code):
     # Add in parent mappings.
     root.parent = None
     for node in ast.walk(root):
-        if hasattr(node, "not_mutate") or (hasattr(node, "decorator_list") and any(decorator.id == notmutate.__name__ for decorator in node.decorator_list)):
+        if hasattr(node, "decorator_list") and any(decorator.id == notmutate.__name__ for decorator in node.decorator_list):
+            node.not_mutate = True
+
+        if hasattr(node, "not_mutate"):
             for child in ast.iter_child_nodes(node):
                 child.not_mutate = True
 
