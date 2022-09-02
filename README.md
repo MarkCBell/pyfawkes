@@ -1,7 +1,7 @@
 # PyFawkes
 
 PyFawkes is a mutation testing tool.
-It supports [py.test](https://docs.pytest.org/en/latest/) tests in Python 3.5+.
+It supports [py.test](https://docs.pytest.org/en/latest/) tests in Python 3.8+.
 
 From article at Wikipedia:
 
