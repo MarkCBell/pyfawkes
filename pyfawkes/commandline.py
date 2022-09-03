@@ -23,7 +23,7 @@ def main():
     if args.list_operators:
         list_operators()
     elif args.source and args.test:
-        operators_abbreviations = set(args.enable if args.enable else Mutator.all_methods)
+        operators_abbreviations = set(args.enable if args.enable else Mutator.abbrs())
         operators_abbreviations -= set(args.disable)
         run(
             args.source,
@@ -36,14 +36,8 @@ def main():
 
 
 def list_operators():
-    operators = dict()
-    for attr in dir(Mutator):
-        method = getattr(Mutator, attr)
-        if hasattr(method, "abbr"):
-            operators[method.abbr] = method.name
-
     print("Operators:")
-    for abbr, name in sorted(operators.items()):
+    for abbr, name in sorted(Mutator.abbrs().items()):
         print(f"  {abbr:3} - {name}")
 
 
@@ -71,7 +65,7 @@ def run(sources, test_targets, operator_abbreviations, timeout_factor):
                 target_ast = create_ast(target_file.read())
 
             for index, site_mutation in enumerate(mutator.explore(target_ast), start=1):
-                print(f" - [#{index:>4}] {target_module.__name__} {site_mutation.operator_name:<3}: ", end="")
+                print(f" - [#{index:>4}] {target_module.__name__} {site_mutation.operator_abbr:<3}: ", end="")
                 with site_mutation():
                     try:
                         code = compile(target_ast, target_module.__name__, "exec")

@@ -10,8 +10,8 @@ METHOD_PATTERN = re.compile(rf"mutate_([A-Za-z0-9]+)($|(_\w+)+$)")
 
 
 class SiteMutation:
-    def __init__(self, operator_name, node, new_node):
-        self.operator_name = operator_name
+    def __init__(self, operator_abbr, node, new_node):
+        self.operator_abbr = operator_abbr
         self.node = node
         self.new_node = new_node
         self.parent = self.node.parent
@@ -44,31 +44,29 @@ class SiteMutation:
             yield
             setattr(self.parent, self.parent_field, self.parent_field_original)
 
-    def __contains__(self, other):
-        return any(node == other.node for node in ast.walk(self.node))
+
+def abbreviate(strn):
+    return "".join(re.findall("[A-Z]", strn))
 
 
-def add_abbreviations(cls):
-    cls.all_methods = []
-    for attr in dir(cls):
-        if match := METHOD_PATTERN.match(attr):
-            method = getattr(cls, attr)
-            superclass_name = method.__qualname__.split(".")[0]
-            method.abbr = "".join(letter for letter in superclass_name if letter.isupper())
-            method.name = " ".join(word.lower() for word in re.findall("[A-Z][a-z]*", superclass_name))
-            method.node = match.group(1)
-            cls.all_methods.append(method.abbr)
-    return cls
-
-
-@add_abbreviations
 class Mutator(*all_mixins):
     def __init__(self, operator_abbreviations):
         self.transformers = defaultdict(list)
         for attr in dir(self):
-            method = getattr(self, attr)
-            if hasattr(method, "abbr") and method.abbr in operator_abbreviations:
-                self.transformers[method.node].append(method)
+            if match := METHOD_PATTERN.match(attr):
+                method = getattr(self.__class__, attr)
+                method.operator_abbr = abbreviate(method.__qualname__.split(".")[0])
+                if method.operator_abbr in operator_abbreviations:
+                    self.transformers[match.group(1)].append(method)
+        print(sum(len(x) for x in self.transformers.values()))
+
+    @classmethod
+    def abbrs(cls):
+        return {
+            abbreviate(superclass.__name__): " ".join(word.lower() for word in re.findall("[A-Z][a-z]*", superclass.__name__))
+            for superclass in cls.__mro__
+            if superclass is not object
+        }
 
     def explore(self, root):
         for node in ast.walk(root):
@@ -76,4 +74,4 @@ class Mutator(*all_mixins):
                 for transformer in self.transformers[node.__class__.__name__]:
                     for new_node in transformer(node):
                         ast.fix_missing_locations(new_node)
-                        yield SiteMutation(transformer.abbr, node, new_node)
+                        yield SiteMutation(transformer.operator_abbr, node, new_node)

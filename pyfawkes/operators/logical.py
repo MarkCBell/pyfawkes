@@ -3,14 +3,15 @@ import ast
 from copy import deepcopy
 from decorator import decorator
 
+
 @decorator
-def copy_node(mutate, self, node):
-    return mutate(self, deepcopy(node, memo={id(node.parent): node.parent}))
+def copy_node(mutate, node):
+    return mutate(deepcopy(node, memo={id(node.parent): node.parent}))
 
 
 class ConditionalOperatorNegation:
     @copy_node
-    def yield_negated_test(self, node):
+    def yield_negated_test(node):
         node.test = ast.UnaryOp(op=ast.Not(), operand=node.test)
         yield node
 
@@ -18,20 +19,29 @@ class ConditionalOperatorNegation:
     mutate_If = yield_negated_test
     mutate_IfExp = yield_negated_test
 
-    def mutate_In(self, node):
+    def mutate_In(node):
         yield ast.NotIn()
+
+    def mutate_NotIn(node):
+        yield ast.In()
+
+    def mutate_Is(node):
+        yield ast.IsNot()
+
+    def mutate_IsNot(node):
+        yield ast.Is()
 
 
 class LogicalOperatorReplacement:
-    def mutate_And(self, node):
+    def mutate_And(node):
         yield ast.Or()
 
-    def mutate_Or(self, node):
+    def mutate_Or(node):
         yield ast.And()
 
 
 class BitwiseOperatorReplacement:
-    def yield_other_bitoperators(self, node):
+    def yield_other_bitoperators(node):
         for op in [ast.BitOr, ast.BitAnd, ast.BitXor]:
             if not isinstance(node, op):
                 yield op()
@@ -40,15 +50,15 @@ class BitwiseOperatorReplacement:
     mutate_BitOr = yield_other_bitoperators
     mutate_BitXor = yield_other_bitoperators
 
-    def mutate_LShift(self, node):
+    def mutate_LShift(node):
         yield ast.RShift()
 
-    def mutate_RShift(self, node):
+    def mutate_RShift(node):
         yield ast.LShift()
 
 
 class ComparisonOperatorReplacement:
-    def yield_other_comparisons(self, node):
+    def yield_other_comparisons(node):
         for comp in [ast.Gt, ast.Lt, ast.GtE, ast.LtE, ast.Eq, ast.NotEq]:
             if not isinstance(node, comp):
                 yield comp()

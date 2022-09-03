@@ -4,23 +4,17 @@ from pyfawkes import utils
 
 
 class UnaryOperatorDeletion:
-    def mutate_UnaryOp(self, node):
+    def mutate_UnaryOp(node):
         yield node.operand
-
-    def mutate_NotIn(self, node):
-        yield ast.In()
-
-    def mutate_IsNot(self, node):
-        yield ast.Is()
 
 
 class StatementDeletion:
-    def mutate_Assign(self, node):
+    def mutate_Assign(node):
         yield ast.Pass()
 
-    def mutate_Return(self, node):
+    def mutate_Return(node):
         yield ast.Pass()
 
-    def mutate_Expr(self, node):
+    def mutate_Expr(node):
         if not utils.is_docstring(node.value):
             yield ast.Pass()

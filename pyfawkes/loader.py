@@ -17,6 +17,7 @@ def load(names, skip=None, exclude_c_extensions=True):
             if module not in skip and not (exclude_c_extensions and _is_c_extension(module)):
                 yield module
 
+
 def load_single(name):
     full_path = os.path.abspath(name)
     if os.path.exists(full_path):
@@ -29,12 +30,14 @@ def load_single(name):
     else:
         yield from load_module(name)
 
+
 def load_file(name):
     if name.endswith(".py"):
         dirname = os.path.dirname(name)
         ensure_in_path(dirname)
         module_name = os.path.basename(os.path.splitext(name)[0])
         yield from load_module(module_name)
+
 
 def load_package(name):
     try:
@@ -51,6 +54,7 @@ def load_package(name):
         except ImportError:
             pass
 
+
 def load_directory(name):
     path = Path(name)
     if (path / "__init__.py").is_file():
@@ -64,6 +68,7 @@ def load_directory(name):
             yield from load_file(subpath)
         else:  # subpath is directory:
             yield from load_directory(subpath)
+
 
 def load_module(name):
     module_path = name.split(".")
@@ -79,11 +84,14 @@ def load_module(name):
         except ImportError:
             pass
 
+
 # Utilities.
+
 
 def ensure_in_path(directory):
     if directory not in sys.path:
         sys.path.insert(0, directory)
+
 
 def is_package(name):
     try:
@@ -94,12 +102,14 @@ def is_package(name):
     finally:
         sys.path_importer_cache.clear()
 
+
 def _module_has_member(module, member_path):  # Count: 1
     for part in member_path:
         if not hasattr(module, part):
             return False
         module = getattr(module, part)
     return True
+
 
 def _is_c_extension(module):
     if isinstance(getattr(module, "__loader__", None), ExtensionFileLoader):
