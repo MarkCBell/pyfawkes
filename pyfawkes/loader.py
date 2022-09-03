@@ -1,10 +1,9 @@
 from pathlib import Path
-
+import importlib
 import inspect
+import os
 import pkgutil
 import sys
-import os
-import importlib
 
 from importlib._bootstrap_external import EXTENSION_SUFFIXES, ExtensionFileLoader
 

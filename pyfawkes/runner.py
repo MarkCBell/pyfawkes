@@ -1,5 +1,5 @@
-from multiprocessing import Pool, TimeoutError
 from collections import namedtuple
+from multiprocessing import Pool, TimeoutError
 import inspect
 import sys
 

@@ -3,10 +3,10 @@ import argparse
 import types
 
 from pyfawkes import __version__ as version
-from pyfawkes.utils import timer, create_ast
 from pyfawkes.loader import load
-from pyfawkes.runner import PytestTestRunner, KILLED, SURVIVED, INCOMPETENT, TIMEOUT
 from pyfawkes.mutator import Mutator
+from pyfawkes.runner import PytestTestRunner, KILLED, SURVIVED, INCOMPETENT, TIMEOUT
+from pyfawkes.utils import timer, create_ast
 
 
 def main():
