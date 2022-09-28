@@ -2,33 +2,15 @@ import ast
 
 
 class ArithmeticOperatorReplacement:
-    def mutate_Add(node):
-        yield ast.Sub()
+    def yield_other_binary_operators(node):
+        for op in [ast.Add, ast.Sub, ast.Mult, ast.Div, ast.FloorDiv, ast.Mod, ast.Pow]:
+            if not isinstance(node, op):
+                yield op()
 
-    def mutate_Sub(node):
-        yield ast.Add()
-
-    def mutate_Mult(node):
-        yield ast.Div()
-        yield ast.FloorDiv()
-        yield ast.Pow()
-
-    def mutate_Div(node):
-        yield ast.Mult()
-        yield ast.FloorDiv()
-
-    def mutate_FloorDiv(node):
-        yield ast.Div()
-        yield ast.Mult()
-
-    def mutate_Mod(node):
-        yield ast.Mult()
-
-    def mutate_Pow(node):
-        yield ast.Mult()
-
-    def mutate_USub(node):
-        yield ast.UAdd()
-
-    def mutate_UAdd(node):
-        yield ast.USub()
+    mutate_Add = yield_other_binary_operators
+    mutate_Sub = yield_other_binary_operators
+    mutate_Mult = yield_other_binary_operators
+    mutate_Div = yield_other_binary_operators
+    mutate_FloorDiv = yield_other_binary_operators
+    mutate_Mod = yield_other_binary_operators
+    mutate_Pow = yield_other_binary_operators
